@@ -42,22 +42,18 @@ class BrowserProvider {
     if (this.token) {
       headers.Authorization = `Bearer ${this.token}`
     }
-    try {
-      const response = await fetch(this.httpUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(jsonRpcRequest)
-      })
-      // FIXME: Check return code, errors
-      const { error, result } = await response.json()
-      if (error) {
-        // FIXME: Return error class with error.code
-        throw new Error(error.message)
-      }
-      return result
-    } catch (e) {
-      throw e
+    const response = await fetch(this.httpUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(jsonRpcRequest)
+    })
+    // FIXME: Check return code, errors
+    const { error, result } = await response.json()
+    if (error) {
+      // FIXME: Return error class with error.code
+      throw new Error(error.message)
     }
+    return result
   }
 
   sendWs (jsonRpcRequest) {

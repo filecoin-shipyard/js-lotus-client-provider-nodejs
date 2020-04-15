@@ -12,6 +12,9 @@
   "devDependencies": {
     "standard": "^14.3.3"
   },
+  "standard": {
+    "globals": [ "WebSocket", "fetch" ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/filecoin-shipyard/lotus-client-provider-browser.git"
