@@ -1,6 +1,6 @@
 {
   "name": "@filecoin-shipyard/lotus-client-provider-browser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "lint": "standard",
@@ -13,7 +13,10 @@
     "standard": "^14.3.3"
   },
   "standard": {
-    "globals": [ "WebSocket", "fetch" ]
+    "globals": [
+      "WebSocket",
+      "fetch"
+    ]
   },
   "repository": {
     "type": "git",
