@@ -1,26 +1,51 @@
 class BrowserProvider {
   constructor (url, options = {}) {
     this.url = url
-    this.httpUrl = url.replace(/^wss:/, 'https:')
+    this.httpUrl = options.httpUrl || url.replace(/^wss:/, 'https:')
+    this.importUrl =
+      options.importUrl || this.httpUrl.replace(/\/rpc\//, '/rest/') + '/import'
     this.id = 0
     this.inflight = new Map()
+    this.cancelled = new Map()
     this.subscriptions = new Map()
-    this.token = options.token
-    if (this.token && this.token !== '') {
-      this.url += `?token=${this.token}`
+    if (typeof options.token === 'function') {
+      this.tokenCallback = options.token
+    } else {
+      this.token = options.token
+      if (this.token && this.token !== '') {
+        this.url += `?token=${this.token}`
+      }
     }
   }
 
   connect () {
     if (!this.connectPromise) {
-      this.connectPromise = new Promise((resolve, reject) => {
-        this.ws = new WebSocket(this.url)
-        // FIXME: reject on error or timeout
-        this.ws.onopen = function () {
-          resolve()
+      const getConnectPromise = () => {
+        return new Promise((resolve, reject) => {
+          this.ws = new WebSocket(this.url)
+          // FIXME: reject on error or timeout
+          this.ws.onopen = function () {
+            resolve()
+          }
+          this.ws.onerror = function () {
+            console.error('ws error')
+            reject()
+          }
+          this.ws.onmessage = this.receive.bind(this)
+        })
+      }
+      if (this.tokenCallback) {
+        const getToken = async () => {
+          this.token = await this.tokenCallback()
+          delete this.tokenCallback
+          if (this.token && this.token !== '') {
+            this.url += `?token=${this.token}`
+          }
         }
-        this.ws.onmessage = this.receive.bind(this)
-      })
+        this.connectPromise = getToken().then(() => getConnectPromise())
+      } else {
+        this.connectPromise = getConnectPromise()
+      }
     }
     return this.connectPromise
   }
@@ -58,6 +83,9 @@ class BrowserProvider {
 
   sendWs (jsonRpcRequest) {
     const promise = new Promise((resolve, reject) => {
+      if (this.destroyed) {
+        reject(new Error('WebSocket has already been destroyed'))
+      }
       this.ws.send(JSON.stringify(jsonRpcRequest))
       // FIXME: Add timeout
       this.inflight.set(jsonRpcRequest.id, (err, result) => {
@@ -78,26 +106,42 @@ class BrowserProvider {
       id: this.id++,
       ...request
     }
-    const promise = new Promise((resolve, reject) => {
+    const promise = this.connect().then(() => {
       this.ws.send(JSON.stringify(json))
       // FIXME: Add timeout
-      this.inflight.set(json.id, (err, result) => {
-        chanId = result
-        this.subscriptions.set(chanId, subscriptionCb)
-        if (err) {
-          reject(err)
-        } else {
-          resolve(cancel)
-        }
+      return new Promise((resolve, reject) => {
+        this.inflight.set(json.id, (err, result) => {
+          chanId = result
+          // console.info(`New subscription ${json.id} using channel ${chanId}`)
+          this.subscriptions.set(chanId, subscriptionCb)
+          if (err) {
+            reject(err)
+          } else {
+            resolve()
+          }
+        })
       })
     })
-    return promise
-    function cancel () {
+    return [cancel.bind(this), promise]
+    async function cancel () {
+      await promise
       this.inflight.delete(json.id)
       if (chanId !== null) {
         this.subscriptions.delete(chanId)
+        await new Promise(resolve => {
+          // FIXME: Add timeout
+          this.cancelled.set(chanId, {
+            cancelledAt: Date.now(),
+            closeCb: resolve
+          })
+          this.sendWs({
+            jsonrpc: '2.0',
+            method: 'xrpc.cancel',
+            params: [json.id]
+          })
+        })
+        // console.info(`Subscription ${json.id} cancelled, channel ${chanId} closed.`)
       }
-      // FIXME: Send cancel message to Lotus?
     }
   }
 
@@ -112,7 +156,27 @@ class BrowserProvider {
         if (subscriptionCb) {
           subscriptionCb(data)
         } else {
-          console.warn('Could not find subscription for channel', chanId)
+          const { cancelledAt } = this.cancelled.get(chanId)
+          if (cancelledAt) {
+            if (Date.now() - cancelledAt > 2000) {
+              console.warn(
+                'Received stale response for cancelled subscription on channel',
+                chanId
+              )
+            }
+          } else {
+            console.warn('Could not find subscription for channel', chanId)
+          }
+        }
+      } else if (method === 'xrpc.ch.close') {
+        // FIXME: Check return code, errors
+        const [chanId] = params
+        const { closeCb } = this.cancelled.get(chanId)
+        if (!closeCb) {
+          console.warn(`Channel ${chanId} was closed before being cancelled`)
+        } else {
+          // console.info(`Channel ${chanId} was closed, calling callback`)
+          closeCb()
         }
       } else {
         const cb = this.inflight.get(id)
@@ -124,7 +188,7 @@ class BrowserProvider {
           }
           cb(null, result)
         } else {
-          console.warn(`Couldn't find subscription for ${id}`)
+          console.warn(`Couldn't find request for ${id}`)
         }
       }
     } catch (e) {
@@ -132,9 +196,28 @@ class BrowserProvider {
     }
   }
 
-  close () {
+  async import (body) {
+    const headers = {
+      'Content-Type': body.type,
+      Accept: '*/*',
+      Authorization: `Bearer ${this.token}`
+    }
+    const response = await fetch(this.importUrl, {
+      method: 'PUT',
+      headers,
+      body
+    })
+    // FIXME: Check return code, errors
+    const result = await response.json()
+    const { Cid: { "/": cid }} = result
+
+    return cid
+  }
+
+  async destroy () {
     if (this.ws) {
       this.ws.close()
+      this.destroyed = true
     }
   }
 }
