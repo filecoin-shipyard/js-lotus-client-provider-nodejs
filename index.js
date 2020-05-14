@@ -1,9 +1,11 @@
 class BrowserProvider {
   constructor (url, options = {}) {
     this.url = url
-    this.httpUrl = options.httpUrl || url.replace(/^wss:/, 'https:')
+    this.httpUrl =
+      options.httpUrl || url.replace(/^wss:/, 'https:').replace(/^ws:/, 'http:')
     this.importUrl =
       options.importUrl || this.httpUrl.replace(/\/rpc\//, '/rest/') + '/import'
+    this.transport = options.transport || 'ws'
     this.id = 0
     this.inflight = new Map()
     this.cancelled = new Map()
@@ -22,6 +24,7 @@ class BrowserProvider {
     if (!this.connectPromise) {
       const getConnectPromise = () => {
         return new Promise((resolve, reject) => {
+          if (this.transport !== 'ws') return resolve()
           this.ws = new WebSocket(this.url)
           // FIXME: reject on error or timeout
           this.ws.onopen = function () {
@@ -29,7 +32,7 @@ class BrowserProvider {
           }
           this.ws.onerror = function () {
             console.error('ws error')
-            reject()
+            reject(new Error('websocket error'))
           }
           this.ws.onmessage = this.receive.bind(this)
         })
@@ -56,10 +59,15 @@ class BrowserProvider {
       id: this.id++,
       ...request
     }
-    return this.sendWs(jsonRpcRequest)
+    if (this.transport === 'ws') {
+      return this.sendWs(jsonRpcRequest)
+    } else {
+      return this.sendHttp(jsonRpcRequest)
+    }
   }
 
   async sendHttp (jsonRpcRequest) {
+    await this.connect()
     const headers = {
       'Content-Type': 'text/plain;charset=UTF-8',
       Accept: '*/*'
@@ -106,6 +114,14 @@ class BrowserProvider {
       id: this.id++,
       ...request
     }
+    if (this.transport !== 'ws') {
+      return [
+        () => {},
+        Promise.reject(
+          new Error('Subscriptions only supported for WebSocket transport')
+        )
+      ]
+    }
     const promise = this.connect().then(() => {
       this.ws.send(JSON.stringify(json))
       // FIXME: Add timeout
@@ -134,11 +150,13 @@ class BrowserProvider {
             cancelledAt: Date.now(),
             closeCb: resolve
           })
-          this.sendWs({
-            jsonrpc: '2.0',
-            method: 'xrpc.cancel',
-            params: [json.id]
-          })
+          if (!this.destroyed) {
+            this.sendWs({
+              jsonrpc: '2.0',
+              method: 'xrpc.cancel',
+              params: [json.id]
+            })
+          }
         })
         // console.info(`Subscription ${json.id} cancelled, channel ${chanId} closed.`)
       }
@@ -197,6 +215,7 @@ class BrowserProvider {
   }
 
   async import (body) {
+    await this.connect()
     const headers = {
       'Content-Type': body.type,
       Accept: '*/*',
@@ -209,7 +228,9 @@ class BrowserProvider {
     })
     // FIXME: Check return code, errors
     const result = await response.json()
-    const { Cid: { "/": cid }} = result
+    const {
+      Cid: { '/': cid }
+    } = result
 
     return cid
   }
