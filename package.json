@@ -1,6 +1,6 @@
 {
   "name": "@filecoin-shipyard/lotus-client-provider-browser",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "module": "index.js",
   "scripts": {
