@@ -246,4 +246,4 @@ class BrowserProvider {
   }
 }
 
-export default BrowserProvider
+module.exports = { BrowserProvider }
