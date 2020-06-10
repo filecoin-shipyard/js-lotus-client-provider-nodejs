@@ -1,11 +1,13 @@
 class BrowserProvider {
   constructor (url, options = {}) {
     this.url = url
+    this.wsUrl =
+      options.wsUrl || url.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:')
     this.httpUrl =
       options.httpUrl || url.replace(/^wss:/, 'https:').replace(/^ws:/, 'http:')
     this.importUrl =
       options.importUrl || this.httpUrl.replace(/\/rpc\//, '/rest/') + '/import'
-    this.transport = options.transport || 'ws'
+    this.transport = options.transport || (url.match(/^http/) ? 'http' : 'ws')
     this.id = 0
     this.inflight = new Map()
     this.cancelled = new Map()
@@ -235,9 +237,10 @@ class BrowserProvider {
     return cid
   }
 
-  async destroy () {
+  async destroy (code = 1000) {
+    // List of codes: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
     if (this.ws) {
-      this.ws.close()
+      this.ws.close(code)
       this.destroyed = true
     }
   }
