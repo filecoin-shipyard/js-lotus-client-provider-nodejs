@@ -1,4 +1,4 @@
-# Lotus JS Client - Web Browser Provider
+# Lotus JS Client - Node.js Provider
 
 This package contains an implementation of the Lotus JS Client provider interface
 that connects to a [Lotus](https://github.com/filecoin-project/lotus) JSON-RPC

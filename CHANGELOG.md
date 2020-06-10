@@ -1,2 +1,2 @@
-# js-lotus-api-browser-provider changelog
+# js-lotus-api-browser-nodejs changelog
 
