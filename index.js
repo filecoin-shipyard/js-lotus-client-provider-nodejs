@@ -1,4 +1,4 @@
-const { BrowserProvider } = require('@jimpick/lotus-client-provider-browser')
+const { BrowserProvider } = require('@filecoin-shipyard/lotus-client-provider-browser')
 const WebSocket = require('ws')
 const fetch = require('node-fetch')
 
