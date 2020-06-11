@@ -1,6 +1,6 @@
 {
   "name": "@filecoin-shipyard/lotus-client-provider-nodejs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "lint": "standard",
     "test": "npm run lint",
