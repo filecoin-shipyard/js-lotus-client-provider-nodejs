@@ -11,7 +11,7 @@
   "author": "Jim Pick (@jimpick)",
   "license": "(Apache-2.0 AND MIT)",
   "dependencies": {
-    "@filecoin-shipyard/lotus-client-provider-browser": "^0.0.11",
+    "@filecoin-shipyard/lotus-client-provider-browser": "^0.0.12",
     "node-fetch": "^2.6.0",
     "ws": "^7.3.0"
   },
@@ -27,11 +27,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/filecoin-shipyard/lotus-client-provider-nodejs.git"
+    "url": "git+https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs.git"
   },
   "bugs": {
-    "url": "https://github.com/filecoin-shipyard/lotus-client-provider-nodejs/issues"
+    "url": "https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues"
   },
-  "homepage": "https://github.com/filecoin-shipyard/lotus-client-provider-nodejs#readme",
+  "homepage": "https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs#readme",
   "description": "Lotus JS Client Node.js Provider module"
 }
