@@ -20,7 +20,7 @@
     "ws": "^8.2.0"
   },
   "devDependencies": {
-    "dual-publish": "^1.0.8",
+    "dual-publish": "^2.0.0",
     "standard": "^16.0.3"
   },
   "standard": {
