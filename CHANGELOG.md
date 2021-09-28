@@ -1,3 +1,10 @@
+### [1.0.2](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/compare/v1.0.1...v1.0.2) (2021-09-28)
+
+
+### Trivial Changes
+
+* **deps:** bump actions/setup-node from 2.4.0 to 2.4.1 ([#6](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues/6)) ([4861941](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/4861941eb19621385746455d6996c472fb1c9cd5))
+
 ### [1.0.1](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/compare/v1.0.0...v1.0.1) (2021-09-27)
 
 
