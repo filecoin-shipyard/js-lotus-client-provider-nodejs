@@ -1,3 +1,17 @@
+### [1.0.5](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/compare/v1.0.4...v1.0.5) (2022-01-20)
+
+
+### Bug Fixes
+
+* **ci:** release with Node.js 16, simplify Actions ([8fd999c](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/8fd999c9c2c0ea7b91f9f6a8c0cf7e4ebcd2778b))
+
+
+### Trivial Changes
+
+* **deps-dev:** bump dual-publish from 2.0.2 to 3.0.0 ([e95ae01](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/e95ae013d13671dc266da36fe4f97f7d681d5e81))
+* **no-release:** bump actions/setup-node from 2.4.1 to 2.5.0 ([#10](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues/10)) ([d6d1007](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/d6d1007a72a75be9f9c577ff437d7fc6095b291e))
+* **no-release:** bump actions/setup-node from 2.5.0 to 2.5.1 ([#11](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues/11)) ([0a2a422](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/0a2a42288633f1206e4d51e501618285c7fabf77))
+
 ### [1.0.4](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/compare/v1.0.3...v1.0.4) (2021-11-04)
 
 
