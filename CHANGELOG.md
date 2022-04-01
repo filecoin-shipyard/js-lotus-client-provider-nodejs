@@ -1,3 +1,17 @@
+## [1.1.0](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/compare/v1.0.5...v1.1.0) (2022-04-01)
+
+
+### Features
+
+* make default options overridable ([#18](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues/18)) ([742432e](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/742432ee19cd4b16d990b52f2bbc73e817312d8b))
+
+
+### Trivial Changes
+
+* **no-release:** bump actions/checkout from 2.4.0 to 3 ([#16](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues/16)) ([f0688f8](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/f0688f8fc1d5737caa990b881a24e3be3fe408bc))
+* **no-release:** bump actions/setup-node from 2.5.1 to 3.0.0 ([#15](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues/15)) ([8f36046](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/8f36046fe93fa0da3f79dd017192858667f7f33d))
+* **no-release:** bump node-fetch from 2.6.7 to 3.2.1 ([#17](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/issues/17)) ([aafa39d](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/commit/aafa39d0516319d52e16b849e541fee205c2d570))
+
 ### [1.0.5](https://github.com/filecoin-shipyard/js-lotus-client-provider-nodejs/compare/v1.0.4...v1.0.5) (2022-01-20)
 
 
