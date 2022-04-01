@@ -5,9 +5,9 @@ const fetch = require('node-fetch')
 class NodejsProvider extends BrowserProvider {
   constructor (url, options = {}) {
     super(url, {
-      ...options,
       WebSocket,
-      fetch
+      fetch,
+      ...options
     })
   }
 }
