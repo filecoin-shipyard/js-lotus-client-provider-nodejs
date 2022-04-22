@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "dual-publish": "^3.0.0",
-    "standard": "^16.0.3"
+    "standard": "^17.0.0"
   },
   "standard": {
     "globals": [
