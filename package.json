@@ -16,7 +16,7 @@
   "license": "(Apache-2.0 AND MIT)",
   "dependencies": {
     "@filecoin-shipyard/lotus-client-provider-browser": "^1.0.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.2.9",
     "ws": "^8.2.0"
   },
   "devDependencies": {
